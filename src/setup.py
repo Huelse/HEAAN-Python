@@ -16,7 +16,7 @@ ext_modules = [
         include_dirs=['/usr/include/python3.6', '../pybind11/include', '/usr/local/include', '../HEAAN/src'],
         language='c++',
         extra_compile_args = cpp_args,
-        extra_objects=['/usr/local/lib/libntl.so', '../HEAAN/lib/libHEAAN.a'],
+        extra_objects=['/usr/local/lib/libntl.so', '../HEAAN/lib/libHEAAN.a'], # both lib need compiled in shared
     ),
 ]
 
