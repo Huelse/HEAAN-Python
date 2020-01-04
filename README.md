@@ -21,9 +21,11 @@ This is a Python wrapper for HEAAN lib.
 
 * ### NTL 
 
-  [ntl-11.3.2](https://www.shoup.net/ntl/) (with GMP), pThread
+  [ntl-11.4.2](https://www.shoup.net/ntl/) (with GMP), pThread
 
   If you downloaded a new ntl package, you need change the `src/DoConfig` SHARED to on.
+
+  If you have a static NTL lib, you can also change the `DEF_PREFIX` to other path.
 
   ```
   cd NTL/src
@@ -37,9 +39,9 @@ This is a Python wrapper for HEAAN lib.
 
 * ### HEAAN
 
-  #### Notice
-
   In "Params.h", 'pbnd' value is 59.0 by default. If you are using NTL with "NTL_ENABLE_AVX_FFT=on", This option reduces that small-prime size bound from 60 bits to 50 bits, [see](https://www.shoup.net/ntl/doc/tour-changes.html). For this reason, you need to change the setting to 49.0.
+
+  Add `-fPIC` order in `HEAAN/lib/src/subdir.mk` line 59.
 
   [HEAAN-2.1](https://github.com/snucrypto/HEAAN)
 
@@ -53,14 +55,14 @@ This is a Python wrapper for HEAAN lib.
 * ### pybind11
 
   ```shell
-  pip3 install pytest
+  pip3 install pytest pybind11
   
   cd pybind11
   mkdir build
   cd build
   cmake ..
   make check -j 4
-  sudo make install
+  sudo make install # or not
   ```
 
   
