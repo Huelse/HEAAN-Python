@@ -13,7 +13,6 @@ PYBIND11_MAKE_OPAQUE(double);
 using ComplexDouble = complex<double>;
 using Double = double;
 
-
 PYBIND11_MODULE(HEAAN, m)
 {
 	m.doc() = "HEAAN For Python.";
@@ -54,7 +53,7 @@ PYBIND11_MODULE(HEAAN, m)
 
 	// Scheme
 	py::class_<Scheme>(m, "Scheme")
-		.def(py::init<SecretKey&, Ring&, bool>(), py::arg(), py::arg(), py::arg("isSerialized")=false)
+		.def(py::init<SecretKey &, Ring &, bool>(), py::arg(), py::arg(), py::arg("isSerialized") = false)
 		// KEYS GENERATION
 		.def("addEncKey", &Scheme::addEncKey)
 		.def("addMultKey", &Scheme::addMultKey)
@@ -65,33 +64,33 @@ PYBIND11_MODULE(HEAAN, m)
 		.def("addRightRotKeys", &Scheme::addRightRotKeys)
 		.def("addBootKey", &Scheme::addBootKey)
 		// ENCODING & DECODING
-		.def("encode", (void (Scheme::*)(Plaintext&, complex<double>*, long, long, long)) &Scheme::encode)
-		.def("encode", (void (Scheme::*)(Plaintext&, double*, long, long, long)) &Scheme::encode)
-		.def("decode", (complex<double> *(Scheme::*)(Plaintext&)) &Scheme::decode)
-		.def("encodeSingle", (void (Scheme::*)(Plaintext&, complex<double>, long, long)) &Scheme::encodeSingle)
-		.def("encodeSingle", (void (Scheme::*)(Plaintext&, double, long, long)) &Scheme::encodeSingle)
-		.def("decodeSingle", (complex<double> (Scheme::*)(Plaintext&, double*, long, long, long)) &Scheme::decodeSingle)
+		.def("encode", (void (Scheme::*)(Plaintext &, complex<double> *, long, long, long)) & Scheme::encode)
+		.def("encode", (void (Scheme::*)(Plaintext &, double *, long, long, long)) & Scheme::encode)
+		.def("decode", (complex<double> * (Scheme::*)(Plaintext &)) & Scheme::decode)
+		.def("encodeSingle", (void (Scheme::*)(Plaintext &, complex<double>, long, long)) & Scheme::encodeSingle)
+		.def("encodeSingle", (void (Scheme::*)(Plaintext &, double, long, long)) & Scheme::encodeSingle)
+		.def("decodeSingle", (complex<double>(Scheme::*)(Plaintext &, double *, long, long, long)) & Scheme::decodeSingle)
 		// ENCRYPTION & DECRYPTION
-		.def("encryptMsg", (void (Scheme::*)(Ciphertext&, Plaintext&)) &Scheme::encryptMsg)
-		.def("decryptMsg", (void (Scheme::*)(Plaintext&, SecretKey&, Ciphertext&)) &Scheme::decryptMsg)
-		.def("encrypt", (void (Scheme::*)(Ciphertext&, complex<double>*, long, long, long)) &Scheme::encrypt)
-		.def("encrypt", (void (Scheme::*)(Ciphertext&, double*, long, long, long)) &Scheme::encrypt)
-		.def("encryptZeros", (void (Scheme::*)(Ciphertext&, long, long, long)) &Scheme::encryptZeros)
-		.def("decrypt", (complex<double>* (Scheme::*)(SecretKey&, Ciphertext&)) &Scheme::decrypt)
-		.def("encryptSingle", (void (Scheme::*)(Ciphertext&, complex<double>, long, long)) &Scheme::encryptSingle)
-		.def("encryptSingle", (void (Scheme::*)(Ciphertext&, double, long, long)) &Scheme::encryptSingle)
-		.def("decryptSingle", (complex<double> (Scheme::*)(SecretKey&, Ciphertext&)) &Scheme::decryptSingle)
+		.def("encryptMsg", (void (Scheme::*)(Ciphertext &, Plaintext &)) & Scheme::encryptMsg)
+		.def("decryptMsg", (void (Scheme::*)(Plaintext &, SecretKey &, Ciphertext &)) & Scheme::decryptMsg)
+		.def("encrypt", (void (Scheme::*)(Ciphertext &, complex<double> *, long, long, long)) & Scheme::encrypt)
+		.def("encrypt", (void (Scheme::*)(Ciphertext &, double *, long, long, long)) & Scheme::encrypt)
+		.def("encryptZeros", (void (Scheme::*)(Ciphertext &, long, long, long)) & Scheme::encryptZeros)
+		.def("decrypt", (complex<double> * (Scheme::*)(SecretKey &, Ciphertext &)) & Scheme::decrypt)
+		.def("encryptSingle", (void (Scheme::*)(Ciphertext &, complex<double>, long, long)) & Scheme::encryptSingle)
+		.def("encryptSingle", (void (Scheme::*)(Ciphertext &, double, long, long)) & Scheme::encryptSingle)
+		.def("decryptSingle", (complex<double>(Scheme::*)(SecretKey &, Ciphertext &)) & Scheme::decryptSingle)
 		// HOMOMORPHIC OPERATIONS
 		.def("negate", &Scheme::negate)
 		.def("negateAndEqual", &Scheme::negateAndEqual)
 		.def("add", &Scheme::add)
 		.def("addAndEqual", &Scheme::addAndEqual)
-		.def("addConst", (void (Scheme::*)(Ciphertext&, Ciphertext&, double, long)) &Scheme::addConst)
-		.def("addConst", (void (Scheme::*)(Ciphertext&, Ciphertext&, RR&, long)) &Scheme::addConst)
-		.def("addConst", (void (Scheme::*)(Ciphertext&, Ciphertext&, complex<double>, long)) &Scheme::addConst)
-		.def("addConstAndEqual", (void (Scheme::*)(Ciphertext&, double, long)) &Scheme::addConstAndEqual)
-		.def("addConstAndEqual", (void (Scheme::*)(Ciphertext&, RR&, long)) &Scheme::addConstAndEqual)
-		.def("addConstAndEqual", (void (Scheme::*)(Ciphertext&, complex<double>, long)) &Scheme::addConstAndEqual)
+		.def("addConst", (void (Scheme::*)(Ciphertext &, Ciphertext &, double, long)) & Scheme::addConst)
+		.def("addConst", (void (Scheme::*)(Ciphertext &, Ciphertext &, RR &, long)) & Scheme::addConst)
+		.def("addConst", (void (Scheme::*)(Ciphertext &, Ciphertext &, complex<double>, long)) & Scheme::addConst)
+		.def("addConstAndEqual", (void (Scheme::*)(Ciphertext &, double, long)) & Scheme::addConstAndEqual)
+		.def("addConstAndEqual", (void (Scheme::*)(Ciphertext &, RR &, long)) & Scheme::addConstAndEqual)
+		.def("addConstAndEqual", (void (Scheme::*)(Ciphertext &, complex<double>, long)) & Scheme::addConstAndEqual)
 		.def("sub", &Scheme::sub)
 		.def("subAndEqual", &Scheme::subAndEqual)
 		.def("subAndEqual2", &Scheme::subAndEqual2)
@@ -103,13 +102,13 @@ PYBIND11_MODULE(HEAAN, m)
 		.def("multAndEqual", &Scheme::multAndEqual)
 		.def("square", &Scheme::square)
 		.def("squareAndEqual", &Scheme::squareAndEqual)
-		.def("multByConst", (void (Scheme::*)(Ciphertext&, Ciphertext&, double, long)) &Scheme::multByConst)
-		.def("multByConst", (void (Scheme::*)(Ciphertext&, Ciphertext&, complex<double>, long)) &Scheme::multByConst)
+		.def("multByConst", (void (Scheme::*)(Ciphertext &, Ciphertext &, double, long)) & Scheme::multByConst)
+		.def("multByConst", (void (Scheme::*)(Ciphertext &, Ciphertext &, complex<double>, long)) & Scheme::multByConst)
 		.def("multByConstVec", &Scheme::multByConstVec)
 		.def("multByConstVecAndEqual", &Scheme::multByConstVecAndEqual)
-		.def("multByConstAndEqual", (void (Scheme::*)(Ciphertext&, double, long)) &Scheme::multByConstAndEqual)
-		.def("multByConstAndEqual", (void (Scheme::*)(Ciphertext&, RR&, long)) &Scheme::multByConstAndEqual)
-		.def("multByConstAndEqual", (void (Scheme::*)(Ciphertext&, complex<double>, long)) &Scheme::multByConstAndEqual)
+		.def("multByConstAndEqual", (void (Scheme::*)(Ciphertext &, double, long)) & Scheme::multByConstAndEqual)
+		.def("multByConstAndEqual", (void (Scheme::*)(Ciphertext &, RR &, long)) & Scheme::multByConstAndEqual)
+		.def("multByConstAndEqual", (void (Scheme::*)(Ciphertext &, complex<double>, long)) & Scheme::multByConstAndEqual)
 		.def("multByPoly", &Scheme::multByPoly)
 		.def("multByPolyNTT", &Scheme::multByPolyNTT)
 		.def("multByPolyAndEqual", &Scheme::multByPolyAndEqual)
@@ -160,8 +159,8 @@ PYBIND11_MODULE(HEAAN, m)
 		.def("EMB", &Ring::EMB)
 		.def("EMBInvLazy", &Ring::EMBInvLazy)
 		.def("EMBInv", &Ring::EMBInv)
-		.def("encode", (void (Ring::*)(ZZ*, double*, long, long)) &Ring::encode)
-		.def("encode", (void (Ring::*)(ZZ*, complex<double>*, long, long)) &Ring::encode)
+		.def("encode", (void (Ring::*)(ZZ *, double *, long, long)) & Ring::encode)
+		.def("encode", (void (Ring::*)(ZZ *, complex<double> *, long, long)) & Ring::encode)
 		.def("decode", &Ring::decode)
 		// CONTEXT
 		.def("addBootContext", &Ring::addBootContext)
@@ -204,7 +203,7 @@ PYBIND11_MODULE(HEAAN, m)
 		.def("addGaussAndEqual", &Ring::addGaussAndEqual)
 		.def("sampleZO", &Ring::sampleHWT)
 		.def("sampleUniform2", &Ring::sampleUniform2);
-		// DFT
+	// DFT
 
 	// RingMultiplier
 	py::class_<RingMultiplier>(m, "RingMultiplier")
@@ -239,8 +238,8 @@ PYBIND11_MODULE(HEAAN, m)
 
 	// Ciphertext
 	py::class_<Ciphertext>(m, "Ciphertext")
-		.def(py::init<long, long, long>(), py::arg("logp")=0, py::arg("logq")=0, py::arg("n")=0)
-		.def(py::init<const Ciphertext&>())
+		.def(py::init<long, long, long>(), py::arg("logp") = 0, py::arg("logq") = 0, py::arg("n") = 0)
+		.def(py::init<const Ciphertext &>())
 		.def("copyParams", &Ciphertext::copyParams)
 		.def("copy", &Ciphertext::copy)
 		.def("free", &Ciphertext::free)
@@ -251,25 +250,25 @@ PYBIND11_MODULE(HEAAN, m)
 	// EvaluatorUtils
 	py::class_<EvaluatorUtils>(m, "EvaluatorUtils")
 		// RANDOM REAL AND COMPLEX NUMBERS
-		.def_static("randomReal", &EvaluatorUtils::randomReal, py::arg("bound")=1.0)
-		.def_static("randomComplex", &EvaluatorUtils::randomComplex, py::arg("bound")=1.0)
-		.def_static("randomCircle", &EvaluatorUtils::randomCircle, py::arg("anglebound")=1.0)
-		.def_static("randomRealArray", &EvaluatorUtils::randomRealArray, py::arg(), py::arg("bound")=1.0)
-		.def_static("randomComplexArray", &EvaluatorUtils::randomComplexArray, py::arg(), py::arg("bound")=1.0)
+		.def_static("randomReal", &EvaluatorUtils::randomReal, py::arg("bound") = 1.0)
+		.def_static("randomComplex", &EvaluatorUtils::randomComplex, py::arg("bound") = 1.0)
+		.def_static("randomCircle", &EvaluatorUtils::randomCircle, py::arg("anglebound") = 1.0)
+		.def_static("randomRealArray", &EvaluatorUtils::randomRealArray, py::arg(), py::arg("bound") = 1.0)
+		.def_static("randomComplexArray", &EvaluatorUtils::randomComplexArray, py::arg(), py::arg("bound") = 1.0)
 		// .def("randomComplexArray", [](long size, double bound = 1.0){ return EvaluatorUtils::randomComplexArray(size, bound);})
-		.def_static("randomCircleArray", &EvaluatorUtils::randomCircleArray, py::arg(), py::arg("bound")=1.0)
+		.def_static("randomCircleArray", &EvaluatorUtils::randomCircleArray, py::arg(), py::arg("bound") = 1.0)
 		// DOUBLE & RR <-> ZZ
 		.def_static("scaleDownToReal", &EvaluatorUtils::scaleDownToReal)
 		// .def_static("scaleUpToZZ", (static ZZ (EvaluatorUtils::*)(const double, const long)) &EvaluatorUtils::scaleUpToZZ);
 		.def("scaleUpToZZ", [](const double x, const long logp) { return EvaluatorUtils::scaleUpToZZ(x, logp); })
-		.def("scaleUpToZZ", [](const RR& x, const long logp) { return EvaluatorUtils::scaleUpToZZ(x, logp); })
+		.def("scaleUpToZZ", [](const RR &x, const long logp) { return EvaluatorUtils::scaleUpToZZ(x, logp); })
 		// ROTATIONS
 		.def_static("leftRotateAndEqual", &EvaluatorUtils::leftRotateAndEqual)
 		.def_static("rightRotateAndEqual", &EvaluatorUtils::rightRotateAndEqual);
 
 	// SchemeAlgo
 	py::class_<SchemeAlgo>(m, "SchemeAlgo")
-		.def(py::init<Scheme&>())
+		.def(py::init<Scheme &>())
 		.def("powerOf2", &SchemeAlgo::powerOf2)
 		.def("powerOf2Extended", &SchemeAlgo::powerOf2Extended)
 		.def("power", &SchemeAlgo::power)
@@ -280,25 +279,24 @@ PYBIND11_MODULE(HEAAN, m)
 
 	// SecretKey
 	py::class_<SecretKey>(m, "SecretKey")
-		.def(py::init<Ring&>());
+		.def(py::init<Ring &>());
 
 	// StringUtils
 	py::class_<StringUtils>(m, "StringUtils")
 		// SHOW ARRAY
-		.def_static("showVec", (void (*)(long*, long)) &StringUtils::showVec)
-		.def_static("showVec", (void (*)(double*, long)) & StringUtils::showVec)
-		.def_static("showVec", (void (*)(complex<double>*, long)) & StringUtils::showVec)
-		.def_static("showVec", (void (*)(ZZ*, long)) & StringUtils::showVec)
+		.def_static("showVec", (void (*)(long *, long)) & StringUtils::showVec)
+		.def_static("showVec", (void (*)(double *, long)) & StringUtils::showVec)
+		.def_static("showVec", (void (*)(complex<double> *, long)) & StringUtils::showVec)
+		.def_static("showVec", (void (*)(ZZ *, long)) & StringUtils::showVec)
 		// SHOW & COMPARE ARRAY
-		.def_static("compare", (void (*)(double, double, string)) &StringUtils::compare)
-		.def_static("compare", (void (*)(complex<double>, complex<double>, string)) &StringUtils::compare)
-		.def_static("compare", (void (*)(double*, double*, long, string)) &StringUtils::compare)
-		.def_static("compare", (void (*)(complex<double>*, complex<double>*, long, string)) &StringUtils::compare)
-		.def_static("compare", (void (*)(double*, double, long, string)) &StringUtils::compare)
-		.def_static("compare", (void (*)(complex<double>*, complex<double>, long, string)) &StringUtils::compare)
-		.def_static("compare", (void (*)(double, double*, long, string)) &StringUtils::compare)
-		.def_static("compare", (void (*)(complex<double>, complex<double>*, long, string)) &StringUtils::compare);
-
+		.def_static("compare", (void (*)(double, double, string)) & StringUtils::compare)
+		.def_static("compare", (void (*)(complex<double>, complex<double>, string)) & StringUtils::compare)
+		.def_static("compare", (void (*)(double *, double *, long, string)) & StringUtils::compare)
+		.def_static("compare", (void (*)(complex<double> *, complex<double> *, long, string)) & StringUtils::compare)
+		.def_static("compare", (void (*)(double *, double, long, string)) & StringUtils::compare)
+		.def_static("compare", (void (*)(complex<double> *, complex<double>, long, string)) & StringUtils::compare)
+		.def_static("compare", (void (*)(double, double *, long, string)) & StringUtils::compare)
+		.def_static("compare", (void (*)(complex<double>, complex<double> *, long, string)) & StringUtils::compare);
 
 	// TimeUtils
 	py::class_<TimeUtils>(m, "TimeUtils")
@@ -311,5 +309,4 @@ PYBIND11_MODULE(HEAAN, m)
 		.def_static("readCiphertext", &SerializationUtils::readCiphertext)
 		.def_static("writeKey", &SerializationUtils::writeKey)
 		.def_static("readKey", &SerializationUtils::readKey);
-
 }
