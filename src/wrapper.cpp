@@ -1,6 +1,7 @@
 #include "HEAAN.h"
 #include <pybind11/pybind11.h>
 #include <pybind11/complex.h>
+#include <pybind11/numpy.h>
 
 namespace py = pybind11;
 
@@ -23,7 +24,17 @@ PYBIND11_MODULE(HEAAN, m)
 
 	// Double
 	py::class_<Double>(m, "Double")
-		.def(py::init<>());
+		.def(py::init<>())
+		.def("numpy", [](py::array_t<double> in) {
+			double *out = new double[in.size()];
+			py::buffer_info in_info = in.request();
+			double *in_ptr = (double *)in_info.ptr;
+			for (std::size_t i = 0; i < in_info.size; i++)
+			{
+				out[i] = in_ptr[i];
+			}
+			return out;
+		});
 
 	// TestScheme
 	py::class_<TestScheme>(m, "TestScheme")
