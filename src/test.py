@@ -1,10 +1,21 @@
 from HEAAN import *
 
+# Data support
+z = [1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 0.1]
+c = Double.numpy(z)
+StringUtils.showVec(c, len(z))
+
+a = np.array(z)
+b = Double.numpy(a)
+StringUtils.showVec(b, len(z))
+
+
 logq = 300
 logp = 30
 logn = 10
 n = 1*2**logn
 slots = n
+
 
 ring = Ring()
 secretKey = SecretKey(ring)
