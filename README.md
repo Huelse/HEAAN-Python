@@ -94,3 +94,9 @@ This lib is still in the experimental stage.
 If any problems, tell me please.
 
 Join us would be better.
+
+
+
+## Contributing
+
+* Professor: [Dr. Chen](https://zhigang-chen.github.io/)
