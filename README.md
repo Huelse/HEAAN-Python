@@ -21,11 +21,11 @@ This is a Python wrapper for HEAAN lib.
 
 * ### NTL 
 
-  [ntl-11.4.2](https://www.shoup.net/ntl/) (with GMP), pThread
+  [ntl-11.4.3](https://www.shoup.net/ntl/) (with GMP, gf2x)
 
-  If you downloaded a new ntl package, you need change the `src/DoConfig` SHARED to on.
+  Change the `src/DoConfig` `SHARED` to on.
 
-  If you have a static NTL lib, you can also change the `DEF_PREFIX` to other path.
+  If you already have a static NTL lib, you need also change the `DEF_PREFIX` to other path.
 
   ```
   cd NTL/src
@@ -45,6 +45,8 @@ This is a Python wrapper for HEAAN lib.
 
   [HEAAN-2.1](https://github.com/snucrypto/HEAAN)
 
+  `git clone https://github.com/snucrypto/HEAAN.git`
+
   ```shell
   cd HEAAN/lib
   make all
@@ -54,15 +56,16 @@ This is a Python wrapper for HEAAN lib.
 
 * ### pybind11
 
+  `git clone https://github.com/pybind/pybind11.git `
+
   ```shell
-  pip3 install pytest pybind11
+  pip3 install -r requirements.txt
   
   cd pybind11
   mkdir build
   cd build
   cmake ..
   make check -j 4
-  sudo make install # or not
   ```
 
   
