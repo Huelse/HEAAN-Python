@@ -20,7 +20,17 @@ PYBIND11_MODULE(HEAAN, m)
 
 	// ComplexDouble
 	py::class_<ComplexDouble>(m, "ComplexDouble")
-		.def(py::init<>());
+		.def(py::init<>())
+		.def("numpy", [](py::array_t<complex<double>> in) {
+			complex<double> *out = new complex<double>[in.size()];
+			py::buffer_info in_info = in.request();
+			complex<double> *in_ptr = (complex<double> *)in_info.ptr;
+			for (std::size_t i = 0; i < in_info.size; i++)
+			{
+				out[i] = in_ptr[i];
+			}
+			return out;
+		});
 
 	// Double
 	py::class_<Double>(m, "Double")
