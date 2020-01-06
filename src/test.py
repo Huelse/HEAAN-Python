@@ -37,14 +37,14 @@ StringUtils.showVec(mvec2, 2)
 
 cipher1 = Ciphertext()
 scheme.encrypt(cipher1, mevc1, n, logp, logq)
-SerializationUtils.writeCiphertext(cipher1, './cipher1.bin')
+# SerializationUtils.writeCiphertext(cipher1, './cipher1.bin')
 
 cipher2 = Ciphertext()
 scheme.encrypt(cipher2, mvec2, n, logp, logq)
-SerializationUtils.writeCiphertext(cipher2, './cipher2.bin')
+# SerializationUtils.writeCiphertext(cipher2, './cipher2.bin')
 
 cipherAdd = Ciphertext()
-scheme.add(cipherAdd, cipher1, cipher2);
+scheme.add(cipherAdd, cipher1, cipher2)
 
 cipherMult = Ciphertext()
 scheme.mult(cipherMult, cipher1, cipher2)
