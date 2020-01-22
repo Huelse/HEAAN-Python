@@ -2,11 +2,11 @@ from HEAAN import *
 
 # Data support
 z = [1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 0.1]
-c = Double.numpy(z)
+c = Double(z)
 StringUtils.showVec(c, len(z))
 
 a = np.array(z)
-b = Double.numpy(a)
+b = Double(a)
 StringUtils.showVec(b, len(z))
 
 
