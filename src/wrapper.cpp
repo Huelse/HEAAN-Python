@@ -1,7 +1,7 @@
-#include "HEAAN.h"
 #include <pybind11/pybind11.h>
 #include <pybind11/complex.h>
 #include <pybind11/numpy.h>
+#include "HEAAN.h"
 
 namespace py = pybind11;
 
@@ -10,13 +10,24 @@ using namespace NTL;
 
 PYBIND11_MAKE_OPAQUE(complex<double>);
 PYBIND11_MAKE_OPAQUE(double);
+PYBIND11_MAKE_OPAQUE(NTL::ZZ);
 
 using ComplexDouble = complex<double>;
 using Double = double;
+using ZZ = NTL::ZZ;
 
 PYBIND11_MODULE(HEAAN, m)
 {
 	m.doc() = "HEAAN For Python.";
+
+	py::class_<ZZ>(m, "ZZ")
+		.def(py::init<>())
+		.def("to_ZZ", [](std::int64_t t){
+			ZZ a;
+			a = NTL::to_ZZ(t);
+			std::cout << a << "\n";
+			return a;
+		});
 
 	// ComplexDouble
 	py::class_<ComplexDouble>(m, "ComplexDouble")
