@@ -12,7 +12,7 @@ This is a Python wrapper for HEAAN lib.
   CMake (>= 3.10), GNU G++ (>= 6.0) or Clang++ (>= 5.0), Python (>=3.6.8)
 
   ```shell
-  sudo apt-get update && sudo apt-get install git g++ make python3 python3-dev python3.6-pip
+  sudo apt-get update && sudo apt-get install git g++ make cmake python3 python3-dev python3.6-pip
   
   git clone https://github.com/Huelse/PYHEAAN.git
   ```

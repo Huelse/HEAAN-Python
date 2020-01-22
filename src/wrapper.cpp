@@ -1,6 +1,8 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/complex.h>
 #include <pybind11/numpy.h>
+#include <sstream>
+#include <string>
 #include "HEAAN.h"
 
 namespace py = pybind11;
@@ -16,6 +18,13 @@ using ComplexDouble = complex<double>;
 using Double = double;
 using ZZ = NTL::ZZ;
 
+std::string zToString(const ZZ &z)
+{
+	std::stringstream buffer;
+	buffer << z;
+	return buffer.str();
+}
+
 PYBIND11_MODULE(HEAAN, m)
 {
 	m.doc() = "HEAAN For Python. From https://github.com/Huelse/HEAAN-Python";
@@ -24,7 +33,7 @@ PYBIND11_MODULE(HEAAN, m)
 	py::class_<ZZ>(m, "ZZ")
 		.def(py::init<>())
 		.def(py::init([](std::int64_t t) { return new ZZ(t); }))
-		.def("print", [](const NTL::ZZ &a) { std::cout << a << std::endl; });
+		.def("__repr__", [](const NTL::ZZ &a) { return zToString(a); });
 
 	// ComplexDouble
 	py::class_<ComplexDouble>(m, "ComplexDouble")
