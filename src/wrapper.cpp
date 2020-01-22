@@ -18,21 +18,18 @@ using ZZ = NTL::ZZ;
 
 PYBIND11_MODULE(HEAAN, m)
 {
-	m.doc() = "HEAAN For Python.";
+	m.doc() = "HEAAN For Python. From https://github.com/Huelse/HEAAN-Python";
 
+	// NTL::ZZ
 	py::class_<ZZ>(m, "ZZ")
 		.def(py::init<>())
-		.def("to_ZZ", [](std::int64_t t){
-			ZZ a;
-			a = NTL::to_ZZ(t);
-			std::cout << a << "\n";
-			return a;
-		});
+		.def(py::init([](std::int64_t t) { return new ZZ(t); }))
+		.def("print", [](const NTL::ZZ &a) { std::cout << a << std::endl; });
 
 	// ComplexDouble
 	py::class_<ComplexDouble>(m, "ComplexDouble")
 		.def(py::init<>())
-		.def("numpy", [](py::array_t<complex<double>> in) {
+		.def(py::init([](py::array_t<complex<double>> in) {
 			complex<double> *out = new complex<double>[in.size()];
 			py::buffer_info in_info = in.request();
 			complex<double> *in_ptr = (complex<double> *)in_info.ptr;
@@ -41,12 +38,21 @@ PYBIND11_MODULE(HEAAN, m)
 				out[i] = in_ptr[i];
 			}
 			return out;
+		}))
+		.def("print", [](const complex<double> *vals, long size = 5) {
+			std::cout << "[";
+			std::cout << vals[0];
+			for (long i = 1; i < size; ++i)
+			{
+				std::cout << ", " << vals[i];
+			}
+			std::cout << "]" << std::endl;
 		});
 
 	// Double
 	py::class_<Double>(m, "Double")
 		.def(py::init<>())
-		.def("numpy", [](py::array_t<double> in) {
+		.def(py::init([](py::array_t<double> in) {
 			double *out = new double[in.size()];
 			py::buffer_info in_info = in.request();
 			double *in_ptr = (double *)in_info.ptr;
@@ -55,6 +61,15 @@ PYBIND11_MODULE(HEAAN, m)
 				out[i] = in_ptr[i];
 			}
 			return out;
+		}))
+		.def("print", [](const double *vals, long size = 5) {
+			std::cout << "[";
+			std::cout << vals[0];
+			for (long i = 1; i < size; ++i)
+			{
+				std::cout << ", " << vals[i];
+			}
+			std::cout << "]" << std::endl;
 		});
 
 	// TestScheme
