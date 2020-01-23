@@ -3,11 +3,10 @@ from HEAAN import *
 # Data support
 z = [1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 0.1]
 c = Double(z)
-StringUtils.showVec(c, len(z))
+c.print(len(z))
 
-a = np.array(z)
-b = Double(a)
-StringUtils.showVec(b, len(z))
+b = Double(np.array(z))
+b.print(len(z))
 
 
 logq = 300

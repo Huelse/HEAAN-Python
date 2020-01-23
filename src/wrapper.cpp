@@ -1,8 +1,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/complex.h>
 #include <pybind11/numpy.h>
-#include <sstream>
-#include <string>
 #include "HEAAN.h"
 
 namespace py = pybind11;
@@ -18,31 +16,43 @@ using ComplexDouble = complex<double>;
 using Double = double;
 using ZZ = NTL::ZZ;
 
-std::string zToString(const ZZ &z)
-{
-	std::stringstream buffer;
-	buffer << z;
-	return buffer.str();
-}
-
 PYBIND11_MODULE(HEAAN, m)
 {
 	m.doc() = "HEAAN For Python. From https://github.com/Huelse/HEAAN-Python";
 
-	// NTL::ZZ
-	py::class_<ZZ>(m, "ZZ")
+	// ZZ pointer array
+	py::class_<ZZ, std::unique_ptr<ZZ, py::nodelete>>(m, "ZZ")
 		.def(py::init<>())
-		.def(py::init([](std::int64_t t) { return new ZZ(t); }))
-		.def("__repr__", [](const NTL::ZZ &a) { return zToString(a); });
+		.def(py::init([](std::uint64_t len) { return new NTL::ZZ[len]; }))
+		.def(py::init([](py::array_t<std::int64_t> in) {
+			NTL::ZZ *out = new NTL::ZZ[in.size()];
+			py::buffer_info in_info = in.request();
+			std::int64_t *in_ptr = (std::int64_t *)in_info.ptr;
+			for (auto i = 0; i < in_info.size; i++)
+			{
+				out[i] = NTL::to_ZZ(in_ptr[i]);
+			}
+			return out;
+		}))
+		.def("print", [](const ZZ *vals, long size = 5) {
+			std::cout << "[";
+			std::cout << vals[0];
+			for (long i = 1; i < size; ++i)
+			{
+				std::cout << ", " << vals[i];
+			}
+			std::cout << "]" << std::endl;
+		});
 
-	// ComplexDouble
+	// ComplexDouble pointer array
 	py::class_<ComplexDouble>(m, "ComplexDouble")
 		.def(py::init<>())
+		.def(py::init([](std::uint64_t len) { return new complex<double>[len]; }))
 		.def(py::init([](py::array_t<complex<double>> in) {
 			complex<double> *out = new complex<double>[in.size()];
 			py::buffer_info in_info = in.request();
 			complex<double> *in_ptr = (complex<double> *)in_info.ptr;
-			for (std::size_t i = 0; i < in_info.size; i++)
+			for (auto i = 0; i < in_info.size; i++)
 			{
 				out[i] = in_ptr[i];
 			}
@@ -58,14 +68,15 @@ PYBIND11_MODULE(HEAAN, m)
 			std::cout << "]" << std::endl;
 		});
 
-	// Double
+	// Double pointer array
 	py::class_<Double>(m, "Double")
 		.def(py::init<>())
+		.def(py::init([](std::uint64_t len) { return new double[len]; }))
 		.def(py::init([](py::array_t<double> in) {
 			double *out = new double[in.size()];
 			py::buffer_info in_info = in.request();
 			double *in_ptr = (double *)in_info.ptr;
-			for (std::size_t i = 0; i < in_info.size; i++)
+			for (auto i = 0; i < in_info.size; i++)
 			{
 				out[i] = in_ptr[i];
 			}
