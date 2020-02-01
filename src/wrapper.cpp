@@ -1,6 +1,10 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/complex.h>
 #include <pybind11/numpy.h>
+#include <sstream>
+#include <fstream>
+#include <string>
+#include <malloc.h>
 #include "HEAAN.h"
 
 namespace py = pybind11;
@@ -16,6 +20,13 @@ using ComplexDouble = complex<double>;
 using Double = double;
 using ZZ = NTL::ZZ;
 
+std::string zToString(const ZZ &z)
+{
+	std::stringstream buffer;
+	buffer << z;
+	return buffer.str();
+}
+
 PYBIND11_MODULE(HEAAN, m)
 {
 	m.doc() = "HEAAN For Python. From https://github.com/Huelse/HEAAN-Python";
@@ -28,12 +39,17 @@ PYBIND11_MODULE(HEAAN, m)
 			NTL::ZZ *out = new NTL::ZZ[in.size()];
 			py::buffer_info in_info = in.request();
 			std::int64_t *in_ptr = (std::int64_t *)in_info.ptr;
-			for (auto i = 0; i < in_info.size; i++)
+
+			NTL_EXEC_RANGE(in_info.size, first, last)
+			for (auto i = first; i < last; i++)
 			{
 				out[i] = NTL::to_ZZ(in_ptr[i]);
 			}
+			NTL_EXEC_RANGE_END
+
 			return out;
 		}))
+		.def("__getitem__", [](const ZZ *z, std::int64_t i) { return zToString(z[i]); })
 		.def("print", [](const ZZ *vals, long size = 5) {
 			std::cout << "[";
 			std::cout << vals[0];
@@ -44,20 +60,37 @@ PYBIND11_MODULE(HEAAN, m)
 			std::cout << "]" << std::endl;
 		});
 
-	// ComplexDouble pointer array
-	py::class_<ComplexDouble>(m, "ComplexDouble")
+	// ComplexDouble
+	py::class_<ComplexDouble>(m, "ComplexDouble", py::buffer_protocol())
+		.def_buffer([](ComplexDouble *v) -> py::buffer_info {
+			return py::buffer_info(
+				v,
+				sizeof(std::complex<double>),
+				py::format_descriptor<std::complex<double>>::format(),
+				1,
+				{malloc_usable_size(v) / sizeof(std::complex<double>)},
+				{sizeof(std::complex<double>)});
+		})
 		.def(py::init<>())
 		.def(py::init([](std::uint64_t len) { return new complex<double>[len]; }))
 		.def(py::init([](py::array_t<complex<double>> in) {
 			complex<double> *out = new complex<double>[in.size()];
 			py::buffer_info in_info = in.request();
 			complex<double> *in_ptr = (complex<double> *)in_info.ptr;
-			for (auto i = 0; i < in_info.size; i++)
+
+			NTL_EXEC_RANGE(in_info.size, first, last)
+			for (auto i = first; i < last; i++)
 			{
 				out[i] = in_ptr[i];
 			}
+			NTL_EXEC_RANGE_END
+
 			return out;
 		}))
+		.def("__getitem__", [](const ComplexDouble *z, std::int64_t i) { return z[i]; })
+		.def("__repr__", [](const ComplexDouble &a) {
+			return "(" + to_string(a.real()) + ", " + to_string(a.imag()) + ")";
+		})
 		.def("print", [](const complex<double> *vals, long size = 5) {
 			std::cout << "[";
 			std::cout << vals[0];
@@ -68,20 +101,35 @@ PYBIND11_MODULE(HEAAN, m)
 			std::cout << "]" << std::endl;
 		});
 
-	// Double pointer array
-	py::class_<Double>(m, "Double")
+	// Double
+	py::class_<Double>(m, "Double", py::buffer_protocol())
+		.def_buffer([](Double *v) -> py::buffer_info {
+			return py::buffer_info(
+				v,
+				sizeof(double),
+				py::format_descriptor<double>::format(),
+				1,
+				{malloc_usable_size(v) / sizeof(double)}, // when the length is even, the return from malloc will increase by 1
+				{sizeof(double)});
+		})
 		.def(py::init<>())
 		.def(py::init([](std::uint64_t len) { return new double[len]; }))
 		.def(py::init([](py::array_t<double> in) {
 			double *out = new double[in.size()];
 			py::buffer_info in_info = in.request();
 			double *in_ptr = (double *)in_info.ptr;
-			for (auto i = 0; i < in_info.size; i++)
+
+			NTL_EXEC_RANGE(in_info.size, first, last)
+			for (auto i = first; i < last; i++)
 			{
 				out[i] = in_ptr[i];
 			}
+			NTL_EXEC_RANGE_END
+
 			return out;
 		}))
+		.def("__getitem__", [](const Double *z, std::int64_t i) { return z[i]; })
+		.def("__repr__", [](const Double &a) { return to_string(a); })
 		.def("print", [](const double *vals, long size = 5) {
 			std::cout << "[";
 			std::cout << vals[0];
@@ -121,6 +169,7 @@ PYBIND11_MODULE(HEAAN, m)
 	// Scheme
 	py::class_<Scheme>(m, "Scheme")
 		.def(py::init<SecretKey &, Ring &, bool>(), py::arg(), py::arg(), py::arg("isSerialized") = false)
+		// .def(py::pickle(&serialize<Scheme>, &deserialize<Scheme>))
 		// KEYS GENERATION
 		.def("addEncKey", &Scheme::addEncKey)
 		.def("addMultKey", &Scheme::addMultKey)
@@ -153,10 +202,10 @@ PYBIND11_MODULE(HEAAN, m)
 		.def("add", &Scheme::add)
 		.def("addAndEqual", &Scheme::addAndEqual)
 		.def("addConst", (void (Scheme::*)(Ciphertext &, Ciphertext &, double, long)) & Scheme::addConst)
-		.def("addConst", (void (Scheme::*)(Ciphertext &, Ciphertext &, RR &, long)) & Scheme::addConst)
+		.def("addConst", (void (Scheme::*)(Ciphertext &, Ciphertext &, NTL::RR &, long)) & Scheme::addConst)
 		.def("addConst", (void (Scheme::*)(Ciphertext &, Ciphertext &, complex<double>, long)) & Scheme::addConst)
 		.def("addConstAndEqual", (void (Scheme::*)(Ciphertext &, double, long)) & Scheme::addConstAndEqual)
-		.def("addConstAndEqual", (void (Scheme::*)(Ciphertext &, RR &, long)) & Scheme::addConstAndEqual)
+		.def("addConstAndEqual", (void (Scheme::*)(Ciphertext &, NTL::RR &, long)) & Scheme::addConstAndEqual)
 		.def("addConstAndEqual", (void (Scheme::*)(Ciphertext &, complex<double>, long)) & Scheme::addConstAndEqual)
 		.def("sub", &Scheme::sub)
 		.def("subAndEqual", &Scheme::subAndEqual)
@@ -174,7 +223,7 @@ PYBIND11_MODULE(HEAAN, m)
 		.def("multByConstVec", &Scheme::multByConstVec)
 		.def("multByConstVecAndEqual", &Scheme::multByConstVecAndEqual)
 		.def("multByConstAndEqual", (void (Scheme::*)(Ciphertext &, double, long)) & Scheme::multByConstAndEqual)
-		.def("multByConstAndEqual", (void (Scheme::*)(Ciphertext &, RR &, long)) & Scheme::multByConstAndEqual)
+		.def("multByConstAndEqual", (void (Scheme::*)(Ciphertext &, NTL::RR &, long)) & Scheme::multByConstAndEqual)
 		.def("multByConstAndEqual", (void (Scheme::*)(Ciphertext &, complex<double>, long)) & Scheme::multByConstAndEqual)
 		.def("multByPoly", &Scheme::multByPoly)
 		.def("multByPolyNTT", &Scheme::multByPolyNTT)
@@ -226,8 +275,8 @@ PYBIND11_MODULE(HEAAN, m)
 		.def("EMB", &Ring::EMB)
 		.def("EMBInvLazy", &Ring::EMBInvLazy)
 		.def("EMBInv", &Ring::EMBInv)
-		.def("encode", (void (Ring::*)(ZZ *, double *, long, long)) & Ring::encode)
-		.def("encode", (void (Ring::*)(ZZ *, complex<double> *, long, long)) & Ring::encode)
+		.def("encode", (void (Ring::*)(NTL::ZZ *, double *, long, long)) & Ring::encode)
+		.def("encode", (void (Ring::*)(NTL::ZZ *, complex<double> *, long, long)) & Ring::encode)
 		.def("decode", &Ring::decode)
 		// CONTEXT
 		.def("addBootContext", &Ring::addBootContext)
@@ -312,7 +361,25 @@ PYBIND11_MODULE(HEAAN, m)
 		.def("free", &Ciphertext::free)
 		.def_readwrite("logp", &Ciphertext::logp)
 		.def_readwrite("logq", &Ciphertext::logq)
-		.def_readwrite("n", &Ciphertext::n);
+		.def_readwrite("n", &Ciphertext::n)
+		.def("__repr__", [](const Ciphertext &p) {
+			return "<class.Ciphertext logp: "+to_string(p.logp)+" logq: "+to_string(p.logq)+" n: "+to_string(p.n)+">";
+		})
+		.def(py::pickle(
+			[](const Ciphertext &p) { // __getstate_
+				return py::make_tuple(p.logp, p.logq, p.n, base64_encoded_cipher);
+			},
+			[](py::tuple t) { // __setstate__
+				if (t.size() != 4)
+					throw std::runtime_error("Invalid state!");
+
+				/* Create a new C++ instance */
+				Ciphertext cipher(t[0].cast<int>(), t[1].cast<int>(), t[2].cast<int>());
+
+				/* Assign any additional state */
+
+				return cipher;
+			}));
 
 	// EvaluatorUtils
 	py::class_<EvaluatorUtils>(m, "EvaluatorUtils")
@@ -328,7 +395,7 @@ PYBIND11_MODULE(HEAAN, m)
 		.def_static("scaleDownToReal", &EvaluatorUtils::scaleDownToReal)
 		// .def_static("scaleUpToZZ", (static ZZ (EvaluatorUtils::*)(const double, const long)) &EvaluatorUtils::scaleUpToZZ);
 		.def("scaleUpToZZ", [](const double x, const long logp) { return EvaluatorUtils::scaleUpToZZ(x, logp); })
-		.def("scaleUpToZZ", [](const RR &x, const long logp) { return EvaluatorUtils::scaleUpToZZ(x, logp); })
+		.def("scaleUpToZZ", [](const NTL::RR &x, const long logp) { return EvaluatorUtils::scaleUpToZZ(x, logp); })
 		// ROTATIONS
 		.def_static("leftRotateAndEqual", &EvaluatorUtils::leftRotateAndEqual)
 		.def_static("rightRotateAndEqual", &EvaluatorUtils::rightRotateAndEqual);
@@ -354,7 +421,7 @@ PYBIND11_MODULE(HEAAN, m)
 		.def_static("showVec", (void (*)(long *, long)) & StringUtils::showVec)
 		.def_static("showVec", (void (*)(double *, long)) & StringUtils::showVec)
 		.def_static("showVec", (void (*)(complex<double> *, long)) & StringUtils::showVec)
-		.def_static("showVec", (void (*)(ZZ *, long)) & StringUtils::showVec)
+		.def_static("showVec", (void (*)(NTL::ZZ *, long)) & StringUtils::showVec)
 		// SHOW & COMPARE ARRAY
 		.def_static("compare", (void (*)(double, double, string)) & StringUtils::compare)
 		.def_static("compare", (void (*)(complex<double>, complex<double>, string)) & StringUtils::compare)
