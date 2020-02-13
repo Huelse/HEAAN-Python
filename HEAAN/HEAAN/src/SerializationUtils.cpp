@@ -43,17 +43,17 @@ Ciphertext* SerializationUtils::readCiphertext(string path) {
 
 	long np = ceil(((double)logq + 1)/8);
 	unsigned char* bytes = new unsigned char[np];
-	Ciphertext cipher(logp, logq, n);
+	Ciphertext* cipher = new Ciphertext(logp, logq, n);
 	for (long i = 0; i < N; ++i) {
 		fin.read(reinterpret_cast<char*>(bytes), np);
-		ZZFromBytes(cipher.ax[i], bytes, np);
+		ZZFromBytes(cipher->ax[i], bytes, np);
 	}
 	for (long i = 0; i < N; ++i) {
 		fin.read(reinterpret_cast<char*>(bytes), np);
-		ZZFromBytes(cipher.bx[i], bytes, np);
+		ZZFromBytes(cipher->bx[i], bytes, np);
 	}
 	fin.close();
-	return &cipher;
+	return cipher;
 }
 
 void SerializationUtils::writeKey(Key* key, string path) {
@@ -65,12 +65,12 @@ void SerializationUtils::writeKey(Key* key, string path) {
 }
 
 Key* SerializationUtils::readKey(string path) {
-	Key key;
+	Key* key = new Key;
 	fstream fin;
 	fin.open(path, ios::binary|ios::in);
-	fin.read(reinterpret_cast<char*>(key.rax), Nnprimes*sizeof(uint64_t));
-	fin.read(reinterpret_cast<char*>(key.rbx), Nnprimes*sizeof(uint64_t));
+	fin.read(reinterpret_cast<char*>(key->rax), Nnprimes*sizeof(uint64_t));
+	fin.read(reinterpret_cast<char*>(key->rbx), Nnprimes*sizeof(uint64_t));
 	fin.close();
-	return &key;
+	return key;
 }
 
