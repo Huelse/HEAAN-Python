@@ -2,10 +2,12 @@
 #include <pybind11/complex.h>
 #include <pybind11/numpy.h>
 #include <sstream>
-#include <fstream>
 #include <string>
+#include <fstream>
+#include <iostream>
 #include <malloc.h>
 #include "HEAAN.h"
+#include "base64.h"
 
 namespace py = pybind11;
 
@@ -366,17 +368,49 @@ PYBIND11_MODULE(HEAAN, m)
 			return "<class.Ciphertext logp: "+to_string(p.logp)+" logq: "+to_string(p.logq)+" n: "+to_string(p.n)+">";
 		})
 		.def(py::pickle(
-			[](const Ciphertext &p) { // __getstate_
-				return py::make_tuple(p.logp, p.logq, p.n, base64_encoded_cipher);
+			[](const Ciphertext &c) { // __getstate_
+				std::stringstream output(std::ios::binary | std::ios::out);
+				long np = ceil(((double)c.logq + 1)/8);
+				ZZ q = conv<ZZ>(1) << c.logq;
+				unsigned char* bytes = new unsigned char[np];
+				for (long i = 0; i < N; ++i) {
+					c.ax[i] %= q;
+					BytesFromZZ(bytes, c.ax[i], np);
+					output.write(reinterpret_cast<char*>(bytes), np);
+				}
+				for (long i = 0; i < N; ++i) {
+					c.bx[i] %= q;
+					BytesFromZZ(bytes, c.bx[i], np);
+					output.write(reinterpret_cast<char*>(bytes), np);
+				}
+				std::string cipherstr = output.str();
+				std::string encoded_cipher = base64_encode(reinterpret_cast<const unsigned char *>(cipherstr.c_str()), (unsigned int)cipherstr.length());
+
+				return py::make_tuple(c.logp, c.logq, c.n, encoded_cipher);
 			},
 			[](py::tuple t) { // __setstate__
 				if (t.size() != 4)
 					throw std::runtime_error("Invalid state!");
 
-				/* Create a new C++ instance */
-				Ciphertext cipher(t[0].cast<int>(), t[1].cast<int>(), t[2].cast<int>());
+				long logp = t[0].cast<int>();
+				long logq = t[1].cast<int>();
+				long n = t[2].cast<int>();
+				Ciphertext cipher(logp, logq, n);
 
-				/* Assign any additional state */
+				std::string encoded_cipher = t[3].cast<string>();
+				std::string cipherstr_decoded = base64_decode(encoded_cipher);
+				std::stringstream input(std::ios::binary | std::ios::in);
+				input.str(cipherstr_decoded);
+				long np = ceil(((double)logq + 1)/8);
+				unsigned char* bytes = new unsigned char[np];
+				for (long i = 0; i < N; ++i) {
+					input.read(reinterpret_cast<char*>(bytes), np);
+					ZZFromBytes(cipher.ax[i], bytes, np);
+				}
+				for (long i = 0; i < N; ++i) {
+					input.read(reinterpret_cast<char*>(bytes), np);
+					ZZFromBytes(cipher.bx[i], bytes, np);
+				}
 
 				return cipher;
 			}));
