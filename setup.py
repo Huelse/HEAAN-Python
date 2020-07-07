@@ -1,4 +1,3 @@
-import os, sys
 from distutils.core import setup, Extension
 from distutils import sysconfig
 
@@ -15,7 +14,7 @@ ext_modules = [
         ['src/base64.cpp', 'src/wrapper.cpp'],
         include_dirs=['/usr/include/python3.6', 'pybind11/include', '/usr/local/include', 'HEAAN/src'],
         language='c++',
-        extra_compile_args = cpp_args,
+        extra_compile_args=cpp_args,
         extra_objects=['/usr/local/lib/libntl.so', 'HEAAN/lib/libHEAAN.a'], # both lib need compiled with -fPIC
     ),
 ]
@@ -24,7 +23,9 @@ setup(
     name='HEAAN',
     version='2.1.0',
     author='Huelse', 
-    author_email='Huelse@oini.top',
+    author_email='huelse@oini.top',
     description='Python wrapper for HEAAN',
+    url='https://github.com/Huelse/HEAAN-Python',
+    license='MIT',
     ext_modules=ext_modules,
 )

@@ -39,7 +39,7 @@ This is a Python wrapper for HEAAN library.
 
   ```shell
   cd NTL/src
-  ./configure SHARED=on  # default install in /usr/local, option DEF_PREFIX=/path/to/HEAAN-Python/extends
+  ./configure SHARED=on  # default install in /usr/local, option DEF_PREFIX=/path/to/extends
   make
   make check  # option
   make install
@@ -104,11 +104,11 @@ python3 test.py
 
 1. ImportError: libntl.so.43: cannot find
 
-    * `export LD_LIBRARY_PATH=/path/to/extends/lib`
+  * `export LD_LIBRARY_PATH=/path/to/extends/lib`
 
-    * add the `/path/to/extends/lib` to `/etc/ld.so.conf` and refresh it `sudo ldconfig`
+  * add the `/path/to/extends/lib` to `/etc/ld.so.conf` and refresh it `sudo ldconfig`
 
-    * install the NTL and gmp in `/usr/local` as default
+  * install the NTL and gmp in `/usr/local` as default
 
 2. MakeError: /usr/bin/ld: cannot find libntl.so or libHEAAN.a
 
@@ -120,7 +120,7 @@ python3 test.py
 
 This lib is still in the experimental stage.
 
-If any problems, email or [Issue](/issues).
+If any problems, email or [Issue](/Huelse/HEAAN-Python/issues).
 
 Email: [huelse@oini.top](mailto:huelse@oini.top?subject=Github-HEAAN-Python-Issues&cc=5956877@qq.com).
 
