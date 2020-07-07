@@ -1,7 +1,7 @@
 # PYHEAAN
-This is a Python wrapper for HEAAN lib.
+This is a Python wrapper for HEAAN library.
 
-[HEAAN](https://github.com/snucrypto/HEAAN) is software library that implements homomorphic encryption (HE) that supports fixed point arithmetics.
+[HEAAN](https://github.com/snucrypto/HEAAN) is a software library that implements homomorphic encryption (HE) that supports fixed point arithmetics. This library supports approximate operations between rational numbers. The approximate error depends on some parameters and almost same with floating point operation errors. The scheme in this library is on the [paper](https://eprint.iacr.org/2016/421.pdf).
 
 
 
@@ -9,84 +9,111 @@ This is a Python wrapper for HEAAN lib.
 
 * ### Environment
 
-  CMake (>= 3.10), GNU G++ (>= 6.0) or Clang++ (>= 5.0), Python (>=3.6.8)
+  CMake (>= 3.12), GNU G++ (>= 6.0) or Clang++ (>= 5.0)
 
   ```shell
   sudo apt-get update && sudo apt-get install git g++ make cmake python3 python3-dev python3.6-pip
   
-  git clone https://github.com/Huelse/PYHEAAN.git
+  git clone https://github.com/Huelse/HEAAN-Python.git
+
+  cd HEAAN-Python
+  mkdir libs
   ```
 
-  
+
+
+* ### GMP
+
+  [gmp-6.1.2](https://gmplib.org/)
+
+  ```shell
+  cd gmp-6.1.2
+  ./configure  # default install in /usr/local, option --prefix=/path/to/extends
+  make
+  make check  # option
+  make install
+  ```
+
+
 
 * ### NTL 
 
-  [ntl-11.4.3](https://www.shoup.net/ntl/) (with GMP, gf2x)
+  [ntl-11.4.3](https://www.shoup.net/ntl/)
 
-  Change the `src/DoConfig` `SHARED` to on.
-
-  If you already have a static NTL lib, you need also change the `DEF_PREFIX` to other path.
-
-  ```
+  ```shell
   cd NTL/src
-  ./configure
+  ./configure SHARED=on  # default install in /usr/local, option DEF_PREFIX=/path/to/HEAAN-Python/extends
   make
-  make check
-  sudo make install
+  make check  # option
+  make install
   ```
 
-  
+
 
 * ### HEAAN
 
-  In "Params.h", 'pbnd' value is 59.0 by default. If you are using NTL with "NTL_ENABLE_AVX_FFT=on", This option reduces that small-prime size bound from 60 bits to 50 bits, [see](https://www.shoup.net/ntl/doc/tour-changes.html). For this reason, you need to change the setting to 49.0.
-
-  Add `-fPIC` order in `HEAAN/lib/src/subdir.mk` line 59.
-
   [HEAAN-2.1](https://github.com/snucrypto/HEAAN)
 
-  `git clone https://github.com/snucrypto/HEAAN.git`
+  In "Params.h", 'pbnd' value is 59.0 by default. If you are using NTL with "NTL_ENABLE_AVX_FFT=on", This option reduces that small-prime size bound from 60 bits to 50 bits, [see](https://www.shoup.net/ntl/doc/tour-changes.html). For this reason, you need to change the setting to 49.0.
 
   ```shell
   cd HEAAN/lib
   make all
   ```
 
-  
+
 
 * ### pybind11
 
-  `git clone https://github.com/pybind/pybind11.git `
+  [pybind11](https://github.com/pybind/pybind11)
 
   ```shell
   pip3 install -r requirements.txt
-  
-  cd pybind11
-  mkdir build
-  cd build
-  cmake ..
-  make check -j 4
   ```
 
+
+
+* ### HEAAN-Python
+
+  * Option 1
+
+  `python3 setup.py build_ext -i`
+
+  `python3 setup.py install` install in pip list, global using.
+
+  * Option 2
   
-
-* ### PYHEAAN
-
   ```shell
   cd src
   cmake .
   make
   ```
 
-  or `python3 setup.py build_ext -i`
+  If success, you will get the dynamic link library in the folder, which name `HEAAN.cpython-<version>.so`.
 
-  if success, you will get the dynamic link library in the folder
+
 
 ## Test
 
-```python
-python test.py
+```python3
+python3 test.py
 ```
+
+
+
+## FAQ
+
+1. ImportError: libntl.so.43: cannot find
+
+    a. `export LD_LIBRARY_PATH=/path/to/extends/lib`
+
+    b. add the `/path/to/extends/lib` to `/etc/ld.so.conf` and refresh it `sudo ldconfig`
+
+    c. install the NTL and gmp in `/usr/local` as default
+
+2. MakeError: /usr/bin/ld: cannot find libntl.so or libHEAAN.a
+
+    Change to absolute path.
 
 
 
@@ -94,9 +121,9 @@ python test.py
 
 This lib is still in the experimental stage.
 
-If any problems, tell me please.
+If any problems, email or [Issue](/issues).
 
-Join us would be better.
+Email: [huelse@oini.top](mailto:huelse@oini.top?subject=Github-HEAAN-Python-Issues&cc=5956877@qq.com).
 
 
 
