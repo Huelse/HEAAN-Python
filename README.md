@@ -15,9 +15,6 @@ This is a Python wrapper for HEAAN library.
   sudo apt-get update && sudo apt-get install git g++ make cmake python3 python3-dev python3.6-pip
   
   git clone https://github.com/Huelse/HEAAN-Python.git
-
-  cd HEAAN-Python
-  mkdir libs
   ```
 
 
@@ -77,9 +74,11 @@ This is a Python wrapper for HEAAN library.
 
   * Option 1
 
-  `python3 setup.py build_ext -i`
+  ```shell
+  python3 setup.py build_ext -i
 
-  `python3 setup.py install` install in pip list, global using.
+  python3 setup.py install  # install in pip list, global using.
+  ```
 
   * Option 2
   
@@ -105,11 +104,11 @@ python3 test.py
 
 1. ImportError: libntl.so.43: cannot find
 
-    a. `export LD_LIBRARY_PATH=/path/to/extends/lib`
+    * `export LD_LIBRARY_PATH=/path/to/extends/lib`
 
-    b. add the `/path/to/extends/lib` to `/etc/ld.so.conf` and refresh it `sudo ldconfig`
+    * add the `/path/to/extends/lib` to `/etc/ld.so.conf` and refresh it `sudo ldconfig`
 
-    c. install the NTL and gmp in `/usr/local` as default
+    * install the NTL and gmp in `/usr/local` as default
 
 2. MakeError: /usr/bin/ld: cannot find libntl.so or libHEAAN.a
 
