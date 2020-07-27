@@ -12,7 +12,7 @@ This is a Python wrapper for HEAAN library.
   CMake (>= 3.12), GNU G++ (>= 6.0) or Clang++ (>= 5.0)
 
   ```shell
-  sudo apt-get update && sudo apt-get install git g++ make cmake python3 python3-dev python3.6-pip
+  sudo apt-get update && sudo apt-get install git build-essential cmake python3 python3-dev python3.6-pip
   
   git clone https://github.com/Huelse/HEAAN-Python.git
   ```
@@ -21,13 +21,13 @@ This is a Python wrapper for HEAAN library.
 
 * ### GMP
 
-  [gmp-6.1.2](https://gmplib.org/)
+  [gmp-6.1.2](https://gmplib.org/download/gmp/gmp-6.1.2.tar.lz)
 
   ```shell
   cd gmp-6.1.2
-  ./configure  # default install in /usr/local, option --prefix=/path/to/extends
+  ./configure SHARED=on # default install in /usr/local, option --prefix=/path/to/extends
   make
-  make check  # option
+  make check  # optional
   make install
   ```
 
@@ -41,8 +41,8 @@ This is a Python wrapper for HEAAN library.
   cd NTL/src
   ./configure SHARED=on  # default install in /usr/local, option DEF_PREFIX=/path/to/extends
   make
-  make check  # option
-  make install
+  make check  # optional
+  sudo make install
   ```
 
 
@@ -65,7 +65,15 @@ This is a Python wrapper for HEAAN library.
   [pybind11](https://github.com/pybind/pybind11)
 
   ```shell
+  # Option 1 to run setup.py
   pip3 install -r requirements.txt
+
+  # Option 2 to run cmake
+  cd pybind11
+  mkdir build && cd build
+  cmake ..
+  make
+  sudo make install
   ```
 
 
@@ -77,7 +85,7 @@ This is a Python wrapper for HEAAN library.
   ```shell
   python3 setup.py build_ext -i
 
-  python3 setup.py install  # install in pip list, global using.
+  python3 setup.py install  # global install
   ```
 
   * Option 2
@@ -94,6 +102,8 @@ This is a Python wrapper for HEAAN library.
 
 ## Test
 
+make sure you already installed the library globally or the file `HEAAN.cpython-<version>.so` in the current directory.
+
 ```python3
 python3 test.py
 ```
@@ -104,11 +114,11 @@ python3 test.py
 
 1. ImportError: libntl.so.43: cannot find
 
-  * `export LD_LIBRARY_PATH=/path/to/extends/lib`
+    * `export LD_LIBRARY_PATH=/path/to/extends/lib`
 
-  * add the `/path/to/extends/lib` to `/etc/ld.so.conf` and refresh it `sudo ldconfig`
+    * add the `/path/to/extends/lib` to `/etc/ld.so.conf` and refresh it `sudo ldconfig`
 
-  * install the NTL and gmp in `/usr/local` as default
+    * install the NTL and gmp in `/usr/local` as default
 
 2. MakeError: /usr/bin/ld: cannot find libntl.so or libHEAAN.a
 
